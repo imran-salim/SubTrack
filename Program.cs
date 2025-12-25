@@ -88,6 +88,34 @@ app.MapPost("/subs", async (SubscriptionDbContext context, Subscription sub) =>
     return Results.Created("$/subs/{sub.Id}", sub);
 });
 
+app.MapPut("/subs/{id}", async (SubscriptionDbContext context, int id, Subscription updatedSub) =>
+{
+    var sub = await context.Subscriptions.FindAsync(id);
+    if (sub == null)
+    {
+        return Results.NotFound();
+    }
+
+    sub.Name = updatedSub.Name;
+    sub.Cost = updatedSub.Cost;
+    sub.Cycle = updatedSub.Cycle;
+    if (updatedSub.Cycle == Subscription.BillingCycle.Weekly)
+    {
+        sub.RenewalDate = updatedSub.RenewalDate.AddDays(7);
+    }
+    else if (updatedSub.Cycle == Subscription.BillingCycle.Monthly)
+    {
+        sub.RenewalDate = updatedSub.RenewalDate.AddMonths(1);
+    }
+    else if (updatedSub.Cycle == Subscription.BillingCycle.Yearly)
+    {
+        sub.RenewalDate = updatedSub.RenewalDate.AddYears(1);
+    }
+
+    await context.SaveChangesAsync();
+    return Results.NoContent();
+});
+
 app.MapDelete("/subs/{id}", async (SubscriptionDbContext context, int id) =>
 {
     var sub = await context.Subscriptions.FindAsync(id);
