@@ -59,6 +59,7 @@ SubTrack is a simple and efficient ASP.NET Core Web API designed to help users t
 | `GET` | `/` | Returns the API name ("SubTrack API"). |
 | `GET` | `/subs` | Retrieves a list of all subscriptions. |
 | `POST` | `/subs` | Creates a new subscription. Requires a JSON body (see below). |
+| `PUT` | `/subs/{id}` | Updates a subscription by its ID. Requires a JSON body. |
 | `DELETE`| `/subs/{id}` | Deletes a subscription by its ID. |
 
 ### Example Request (POST /subs)
