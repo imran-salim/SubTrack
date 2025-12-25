@@ -14,7 +14,7 @@ function Subscription({ subscription }: SubscriptionProps) {
 			<td>{subscription.name}</td>
 			<td>{subscription.cost}</td>
 			<td>{subscription.cycle}</td>
-			<td>{subscription.renewalDate}</td>
+			<td>{new Date(subscription.renewalDate).toLocaleDateString()}</td>
 			<td>
 				<button>Edit</button>
 			</td>
