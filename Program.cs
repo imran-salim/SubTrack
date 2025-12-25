@@ -116,8 +116,8 @@ app.MapPut("/subs/{id}", async (SubscriptionDbContext context, int id, Subscript
     }
     
     sub.Cycle = updatedSub.Cycle;
-
     await context.SaveChangesAsync();
+    
     return Results.NoContent();
 });
 
