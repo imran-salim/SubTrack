@@ -45,6 +45,11 @@ app.MapGet("/subs", async (SubscriptionDbContext context) =>
     return await context.Subscriptions.ToListAsync();
 });
 
+app.MapGet("/subs/{id}", async (SubscriptionDbContext context, int id) => {
+    var sub = await context.Subscriptions.FindAsync(id);
+    return sub is not null ? Results.Ok(sub) : Results.NotFound();
+});
+
 app.MapPost("/subs", async (SubscriptionDbContext context, Subscription sub) =>
 {
     if (sub == null)
