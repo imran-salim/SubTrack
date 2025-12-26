@@ -6,10 +6,8 @@ interface Subscription {
   id: number
   name: string
   cost: number
-  cycle: string
+  cycle: number
   renewalDate: string
-  deleteSubscription?: (id: number) => void
-  editSubscription?: (id: number) => void
 }
 
 function App() {  
@@ -25,7 +23,7 @@ function App() {
         setSubs(data)
       })
       .catch(error => console.error('Error fetching subscriptions:', error))
-  }, [])
+  }, [apiUrl])
 
   function deleteSubscription(id: number) {
     setSubs(subs.filter(sub => sub.id !== id))
@@ -34,6 +32,27 @@ function App() {
     }).then(response => {
       if (!response.ok) {
           console.error('Error deleting subscription with ID:', id)
+      }
+    })
+  }
+
+  function editSubscription(id: number, updatedSub: Partial<Subscription>) {
+    fetch(`${apiUrl}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedSub),
+    }).then(response => {
+      if (response.ok) {
+        // Fetch the updated subscription from the server
+        return fetch(`${apiUrl}/${id}`).then(res => res.json())
+      } else {
+        console.error('Error updating subscription with ID:', id)
+      }
+    }).then(updatedSubscription => {
+      if (updatedSubscription) {
+        setSubs(subs.map(sub => sub.id === id ? updatedSubscription : sub))
       }
     })
   }
@@ -53,7 +72,7 @@ function App() {
           </thead>
           <tbody>
             {subs.map(sub => (
-              <Subscription key={sub.id} subscription={sub} deleteSubscription={deleteSubscription} />
+              <Subscription key={sub.id} subscription={sub} deleteSubscription={deleteSubscription} editSubscription={editSubscription} />
             ))}
           </tbody>
         </table>
