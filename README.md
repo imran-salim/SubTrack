@@ -38,6 +38,13 @@ SubTrack is a full-stack subscription tracking application designed to help user
 * [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
 * [Node.js](https://nodejs.org/) (version 18+ recommended)
 
+#### Linux
+On Arch Linux derivatives (Manjaro, endeavourOS, SteamOS), you will need to install .NET, along with the ASP.NET runtime and the Entity Framework tools. Install these with:
+```bash
+sudo pacman -S dotnet-sdk aspnet-targeting-pack aspnet-runtime
+dotnet tool install dotnet-ef
+```
+
 ### Installation & Running
 
 1.  **Clone the repository**
