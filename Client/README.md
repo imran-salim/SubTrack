@@ -5,9 +5,11 @@ A modern React frontend for the SubTrack application, designed to help users tra
 ## Features
 
 - **Dashboard View**: Displays a comprehensive table of all active subscriptions.
-- **Subscription Details**: Shows key information including Name, Cost, Billing Cycle, and calculated Renewal Date.
-- **Management UI**: Interface elements for editing and deleting subscriptions.
-- **Real-time Data**: Fetches data directly from the SubTrack ASP.NET Core Web API.
+- **Inline Editing**: Update subscription details (Name, Cost, Billing Cycle) directly within the list row without navigating away.
+- **Quick Add**: Rapidly create new subscriptions using the integrated form row at the bottom of the table.
+- **Input Validation**: Prevents submission of invalid data (e.g., empty names or negative costs).
+- **Smart Renewal Display**: Automatically formats and displays the next renewal date based on the backend calculation.
+- **Real-time Data**: Fetches and syncs data directly with the SubTrack ASP.NET Core Web API.
 
 ## Tech Stack
 
@@ -27,7 +29,7 @@ A modern React frontend for the SubTrack application, designed to help users tra
 1.  **Navigate to the client directory:**
 
     ```bash
-    cd imran-salim/subtrack/SubTrack-client/Client
+    cd ~/SubTrack/Client
     ```
 
 2.  **Install dependencies:**
@@ -47,18 +49,22 @@ A modern React frontend for the SubTrack application, designed to help users tra
 
 ## Project Structure
 
-- **`src/App.tsx`**: Main component that handles fetching subscription data.
-- **`src/components/Subscription.tsx`**: Reusable component for rendering individual subscription rows.
+- **`src/App.tsx`**: Main component that handles fetching data, the "Quick Add" logic, and global state.
+- **`src/components/Subscription.tsx`**: Component for individual rows, handling "Inline Editing" state and UI.
 - **`src/main.tsx`**: Application entry point.
 
 ## Configuration
 
-The API endpoint is currently configured in `src/App.tsx`. If your backend runs on a different port, update the `fetch` URL accordingly:
+The API endpoint can be configured via environment variables or falls back to a default.
 
-```typescript
-// src/App.tsx
-fetch("http://localhost:5123/subs");
-```
+1.  **Environment Variable (Recommended):**
+    Create a `.env` file in the `Client` directory and set `VITE_API_URL`:
+    ```env
+    VITE_API_URL=http://your-api-url:port/subs
+    ```
+
+2.  **Default Fallback:**
+    If no environment variable is set, the application defaults to `http://localhost:5123/subs` as defined in `src/App.tsx`.
 
 ## Scripts
 

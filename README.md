@@ -1,28 +1,30 @@
 # SubTrack
 
-SubTrack is a full-stack subscription tracking application designed to help users manage their recurring expenses efficiently. It consists of a high-performance **ASP.NET Core Web API** backend and a modern **React (TypeScript)** frontend.
+SubTrack is a full-stack subscription tracking application designed to help users manage their recurring expenses efficiently. It features a high-performance **ASP.NET Core Web API** backend with smart renewal logic and a modern, interactive **React (TypeScript)** frontend.
 
-## Features
+## ✨ Key Features
 
-### Backend (API)
-* **Subscription Management**: Create, view, update, and delete subscriptions.
-* **Flexible Billing Cycles**: Supports Weekly, Monthly, and Yearly billing cycles.
-* **Automatic Renewal**: Automatically calculates next renewal dates based on billing cycles.
-* **Persistent Storage**: Uses SQLite with Entity Framework Core.
-* **OpenAPI Integration**: Includes Swagger UI for interactive API documentation.
+### 🚀 Backend (API)
+* **Smart Renewal Logic**: Automatically calculates and updates the next renewal date when a subscription's billing cycle changes.
+* **Flexible Billing Cycles**: Native support for **Weekly**, **Monthly**, and **Yearly** billing cycles with automated date math.
+* **Full CRUD Operations**: Create, Read, Update, and Delete subscriptions via a RESTful API.
+* **Persistent Storage**: Reliable data persistence using **SQLite** and **Entity Framework Core**.
+* **OpenAPI Integration**: Built-in Swagger UI for interactive API documentation and testing.
 
-### Frontend (Client)
-* **Dashboard View**: Displays a comprehensive table of all active subscriptions.
-* **Visual Feedback**: View names, costs, renewal dates, and billing cycles in a clean user interface.
-* **Modern Stack**: Built with React 19, TypeScript, and Vite for fast development and hot module replacement (HMR).
+### 💻 Frontend (Client)
+* **Interactive Dashboard**: View all subscriptions in a clean, responsive table.
+* **Inline Editing**: Update subscription details (Name, Cost, Billing Cycle) directly within the list without navigating away.
+* **Quick Add**: Rapidly create new subscriptions using the integrated form row at the bottom of the list.
+* **Input Validation**: Client-side protection prevents empty names or negative costs from being submitted.
+* **Visual Feedback**: Real-time updates for costs and formatted renewal dates.
 
-## Technologies
+## 🛠 Tech Stack
 
 ### Server
 * **Framework**: .NET 10.0 (ASP.NET Core Minimal APIs)
 * **Database**: SQLite (`Microsoft.EntityFrameworkCore.Sqlite`)
 * **ORM**: Entity Framework Core
-* **Documentation**: NSwag
+* **Documentation**: NSwag / Swagger UI
 
 ### Client
 * **Framework**: React 19
@@ -30,7 +32,7 @@ SubTrack is a full-stack subscription tracking application designed to help user
 * **Build Tool**: Vite
 * **Styling**: CSS Modules / Standard CSS
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 * [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
@@ -72,29 +74,29 @@ SubTrack is a full-stack subscription tracking application designed to help user
         ```
     * The application will be available at `http://localhost:5173`.
 
-## Configuration
+## 📡 API Endpoints
 
-* **Database**: The backend uses a local SQLite file named `SubTrack.db`. The connection string is defined in `appsettings.json`.
-* **CORS**: The backend is configured to allow requests specifically from `http://localhost:5173` (the default Vite port).
-* **API Connection**: The React client is currently hardcoded to fetch data from `http://localhost:5123/subs` (see `Client/src/App.tsx`).
-
-## API Endpoints
+The API is configured to allow CORS requests from `http://localhost:5173`.
 
 | Method | Endpoint       | Description                                                 |
 | :----- | :------------- | :---------------------------------------------------------- |
-| `GET`  | `/`            | Returns the API name ("SubTrack API").                      |
-| `GET`  | `/subs`        | Retrieves a list of all subscriptions.                      |
-| `POST` | `/subs`        | Creates a new subscription.                                 |
-| `PUT`  | `/subs/{id}`   | Updates a subscription by its ID.                           |
-| `DELETE`| `/subs/{id}`  | Deletes a subscription by its ID.                           |
+| `GET`  | `/`            | Returns the API name ("SubTrack API").           |
+| `GET`  | `/subs`        | Retrieves a list of all subscriptions.           |
+| `GET`  | `/subs/{id}`   | Retrieves a single subscription by its ID.       |
+| `POST` | `/subs`        | Creates a new subscription with auto-calculated renewal. |
+| `PUT`  | `/subs/{id}`   | Updates a subscription (recalculates renewal if cycle changes). |
+| `DELETE`| `/subs/{id}`  | Deletes a subscription by its ID.                |
 
-### Example Subscription Object
+### Data Models
 
+**Subscription Object**
 ```json
 {
+  "id": 1,
   "name": "Netflix",
   "cost": 15.99,
-  "cycle": 1
+  "cycle": 1,
+  "renewalDate": "2025-12-25T00:00:00"
 }
 ```
 
