@@ -1,60 +1,91 @@
-import { useEffect, useState } from 'react'
-import Subscription from './components/Subscription'
-import './App.css'
+import { useEffect, useState } from "react";
+import Subscription from "./components/Subscription";
+import "./App.css";
 
 interface Subscription {
-  id: number
-  name: string
-  cost: number
-  cycle: number
-  renewalDate: string
+  id: number;
+  name: string;
+  cost: number;
+  cycle: number;
+  renewalDate: string;
 }
 
-function App() {  
-  const [subs, setSubs] = useState<Subscription[]>([])
+function App() {
+  const [subs, setSubs] = useState<Subscription[]>([]);
+  const [newSubName, setNewSubName] = useState("");
+  const [newSubCost, setNewSubCost] = useState(0);
+  const [newSubCycle, setNewSubCycle] = useState(1);
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5123/subs'
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5123/subs";
 
   useEffect(() => {
     fetch(apiUrl)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Fetched subscriptions:', data)
-        setSubs(data)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Fetched subscriptions:", data);
+        setSubs(data);
       })
-      .catch(error => console.error('Error fetching subscriptions:', error))
-  }, [apiUrl])
+      .catch((error) => console.error("Error fetching subscriptions:", error));
+  }, [apiUrl]);
 
   function deleteSubscription(id: number) {
-    setSubs(subs.filter(sub => sub.id !== id))
+    setSubs(subs.filter((sub) => sub.id !== id));
     fetch(`${apiUrl}/${id}`, {
-      method: 'DELETE',
-    }).then(response => {
+      method: "DELETE",
+    }).then((response) => {
       if (!response.ok) {
-          console.error('Error deleting subscription with ID:', id)
+        console.error("Error deleting subscription with ID:", id);
       }
-    })
+    });
   }
 
   function editSubscription(id: number, updatedSub: Partial<Subscription>) {
     fetch(`${apiUrl}/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedSub),
-    }).then(response => {
-      if (response.ok) {
-        // Fetch the updated subscription from the server
-        return fetch(`${apiUrl}/${id}`).then(res => res.json())
-      } else {
-        console.error('Error updating subscription with ID:', id)
-      }
-    }).then(updatedSubscription => {
-      if (updatedSubscription) {
-        setSubs(subs.map(sub => sub.id === id ? updatedSubscription : sub))
-      }
     })
+      .then((response) => {
+        if (response.ok) {
+          return fetch(`${apiUrl}/${id}`).then((res) => res.json());
+        } else {
+          console.error("Error updating subscription with ID:", id);
+        }
+      })
+      .then((updatedSubscription) => {
+        if (updatedSubscription) {
+          setSubs(
+            subs.map((sub) => (sub.id === id ? updatedSubscription : sub)),
+          );
+        }
+      });
+  }
+
+  function addSubscription(newSub: Omit<Subscription, "id" | "renewalDate">) {
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newSub),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to add subscription");
+        }
+      })
+      .then((newSubscription) => {
+        setSubs([...subs, newSubscription]);
+        // Clear form inputs
+        setNewSubName("");
+        setNewSubCost(0);
+        setNewSubCycle(1);
+      })
+      .catch((error) => console.error("Error adding subscription:", error));
   }
 
   return (
@@ -71,35 +102,61 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {subs.map(sub => (
-              <Subscription key={sub.id} subscription={sub} deleteSubscription={deleteSubscription} editSubscription={editSubscription} />
+            {subs.map((sub) => (
+              <Subscription
+                key={sub.id}
+                subscription={sub}
+                deleteSubscription={deleteSubscription}
+                editSubscription={editSubscription}
+              />
             ))}
             <tr>
               <td>
-                <input type="text" placeholder="New Subscription Name" />
+                <input
+                  type="text"
+                  placeholder="New Subscription Name"
+                  value={newSubName}
+                  onChange={(e) => setNewSubName(e.target.value)}
+                />
               </td>
               <td>
-                <input type="number" placeholder="Cost" />
+                <input
+                  type="number"
+                  placeholder="Cost"
+                  value={newSubCost}
+                  onChange={(e) => setNewSubCost(Number(e.target.value))}
+                />
               </td>
               <td>
-                <select>
+                <select
+                  value={newSubCycle}
+                  onChange={(e) => setNewSubCycle(Number(e.target.value))}
+                >
                   <option value="0">Weekly</option>
                   <option value="1">Monthly</option>
                   <option value="2">Yearly</option>
                 </select>
               </td>
+              <div></div>
               <td>
-                <input type="date" />
-              </td>
-              <td>
-                <button>Add Subscription</button>
+                <button
+                  onClick={() =>
+                    addSubscription({
+                      name: newSubName,
+                      cost: newSubCost,
+                      cycle: newSubCycle,
+                    })
+                  }
+                >
+                  Add Subscription
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
