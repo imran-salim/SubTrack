@@ -64,6 +64,15 @@ function App() {
   }
 
   function addSubscription(newSub: Omit<Subscription, "id" | "renewalDate">) {
+    if (!newSub.name.trim()) {
+      console.error("Subscription name cannot be empty");
+      return;
+    }
+    if (newSub.cost < 0) {
+      console.error("Subscription cost cannot be negative");
+      return;
+    }
+
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -80,7 +89,6 @@ function App() {
       })
       .then((newSubscription) => {
         setSubs([...subs, newSubscription]);
-        // Clear form inputs
         setNewSubName("");
         setNewSubCost(0);
         setNewSubCycle(1);
