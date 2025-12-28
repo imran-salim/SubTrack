@@ -48,35 +48,39 @@ function Subscription({
   }
 
   return (
-    <tr>
-      <td>
+    <tr className="border-t border-slate-700 bg-slate-800 hover:bg-slate-750 transition">
+      <td className="px-6 py-4 text-slate-100">
         {editing ? (
           <input
             type="text"
             value={editedName}
             onChange={(e) => setEditedName(e.target.value)}
+            className="w-full px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
           />
         ) : (
           subscription.name
         )}
       </td>
-      <td>
+      <td className="px-6 py-4 text-slate-100">
         $
         {editing ? (
           <input
             type="number"
+            step="0.01"
             value={editedCost.toString()}
             onChange={(e) => setEditedCost(Number(e.target.value))}
+            className="w-16 px-2 py-1 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
           />
         ) : (
-          subscription.cost
+          subscription.cost.toFixed(2)
         )}
       </td>
-      <td>
+      <td className="px-6 py-4 text-slate-100">
         {editing ? (
           <select
             value={editedCycle}
             onChange={(e) => setEditedCycle(Number(e.target.value))}
+            className="px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
           >
             {Object.entries(cycleMap).map(([key, value]) => (
               <option key={key} value={key}>
@@ -88,8 +92,10 @@ function Subscription({
           cycleMap[subscription.cycle]
         )}
       </td>
-      <td>{new Date(subscription.renewalDate).toLocaleDateString()}</td>
-      <td>
+      <td className="px-6 py-4 text-slate-100">
+        {new Date(subscription.renewalDate).toLocaleDateString()}
+      </td>
+      <td className="px-6 py-4 flex gap-2">
         {editing ? (
           <>
             <button
@@ -101,19 +107,33 @@ function Subscription({
                 });
                 setEditing(false);
               }}
+              className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition"
             >
               Save
             </button>
-            <button onClick={handleCancel}>Cancel</button>
+            <button
+              onClick={handleCancel}
+              className="px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition"
+            >
+              Cancel
+            </button>
           </>
         ) : (
-          <button onClick={handleEdit}>Edit</button>
+          <>
+            <button
+              onClick={handleEdit}
+              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => deleteSubscription(subscription.id)}
+              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition"
+            >
+              Delete
+            </button>
+          </>
         )}
-      </td>
-      <td>
-        <button onClick={() => deleteSubscription(subscription.id)}>
-          Delete
-        </button>
       </td>
     </tr>
   );
