@@ -59,6 +59,7 @@ The API endpoint can be configured via environment variables or falls back to a 
 
 1.  **Environment Variable (Recommended):**
     Create a `.env` file in the `Client` directory and set `VITE_API_URL`:
+
     ```env
     VITE_API_URL=http://your-api-url:port/subs
     ```
