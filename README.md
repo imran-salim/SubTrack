@@ -49,8 +49,8 @@ dotnet tool install dotnet-ef
 
 1.  **Clone the repository**
     ```bash
-    git clone [https://github.com/imran-salim/subtrack.git](https://github.com/imran-salim/subtrack.git)
-    cd subtrack/
+    git clone [https://github.com/imran-salim/subtrack.git](https://github.com/imran-salim/SubTrack.git)
+    cd SubTrack/
     ```
 
 2.  **Backend Setup**

@@ -73,7 +73,7 @@ app.MapPost("/subs", async (SubscriptionDbContext context, Subscription sub) =>
     context.Subscriptions.Add(sub);
     await context.SaveChangesAsync();
 
-    return Results.Created("$/subs/{sub.Id}", sub);
+    return Results.Created($"/subs/{sub.Id}", sub);
 });
 
 app.MapPut("/subs/{id}", async (SubscriptionDbContext context, int id, Subscription updatedSub) =>
