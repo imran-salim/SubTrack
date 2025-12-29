@@ -1,0 +1,21 @@
+services:
+  backend:
+    image: imran-salim/subtrack-backend
+    build: ./Deployment/Backend
+    ports:
+      - "127.0.0.1:5123:5123"
+    command: sh -c "dotnet tool install dotnet-ef && dotnet restore && dotnet ef database update && dotnet run"
+    volumes:
+      - type: bind
+        source: ./Backend
+        target: /usr/local/subtrack/backend
+  client:
+    image: imran-salim/subtrack-client
+    build: ./Deployment/Client
+    ports:
+      - "127.0.0.1:5173:5173"
+    command: sh -c "npm install && npm run dev -- --host --port 5173"
+    volumes:
+      - type: bind
+        source: ./Client
+        target: /usr/local/subtrack/client
