@@ -1,0 +1,23 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5123:8080"
+    volumes:
+      - ./backend-data:/app/data
+    environment:
+      - ConnectionStrings__DefaultConnections=Data Source=/app/data/SubTrack.db
+      - ASPNETCORE_HTTP_PORTS=8080
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5123/subs
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
