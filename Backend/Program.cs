@@ -85,13 +85,10 @@ app.MapPut("/subs/{id}", async (SubscriptionDbContext context, ISubscriptionServ
 
     sub.Name = updatedSub.Name;
     sub.Cost = updatedSub.Cost;
-
-    if (sub.Cycle != updatedSub.Cycle) 
-    {
-        sub.RenewalDate = subService.CalculateRenewalDate(updatedSub.Cycle);
-    }
-    
     sub.Cycle = updatedSub.Cycle;
+
+    sub.RenewalDate = subService.CalculateRenewalDate(updatedSub.Cycle);
+    
     await context.SaveChangesAsync();
     
     return Results.NoContent();
