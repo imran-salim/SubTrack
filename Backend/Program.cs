@@ -4,6 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SubscriptionDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnections")));
 
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
 var clientUrl = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new string[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>
 {
@@ -24,6 +26,14 @@ builder.Services.AddOpenApiDocument(config =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<SubscriptionDbContext>();
+    context.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseOpenApi();
@@ -50,25 +60,14 @@ app.MapGet("/subs/{id}", async (SubscriptionDbContext context, int id) => {
     return sub is not null ? Results.Ok(sub) : Results.NotFound();
 });
 
-app.MapPost("/subs", async (SubscriptionDbContext context, Subscription sub) =>
+app.MapPost("/subs", async (SubscriptionDbContext context, ISubscriptionService subService, Subscription sub) =>
 {
     if (sub == null)
     {
         return Results.BadRequest();
     }
 
-    if (sub.Cycle == Subscription.BillingCycle.Weekly)
-    {
-        sub.RenewalDate = DateTime.Now.AddDays(7);
-    }
-    else if (sub.Cycle == Subscription.BillingCycle.Monthly)
-    {
-        sub.RenewalDate = DateTime.Now.AddMonths(1);
-    }
-    else if (sub.Cycle == Subscription.BillingCycle.Yearly)
-    {
-        sub.RenewalDate = DateTime.Now.AddYears(1);
-    }
+    sub.RenewalDate = subService.CalculateRenewalDate(sub.Cycle);
 
     context.Subscriptions.Add(sub);
     await context.SaveChangesAsync();
@@ -76,7 +75,7 @@ app.MapPost("/subs", async (SubscriptionDbContext context, Subscription sub) =>
     return Results.Created($"/subs/{sub.Id}", sub);
 });
 
-app.MapPut("/subs/{id}", async (SubscriptionDbContext context, int id, Subscription updatedSub) =>
+app.MapPut("/subs/{id}", async (SubscriptionDbContext context, ISubscriptionService subService, int id, Subscription updatedSub) =>
 {
     var sub = await context.Subscriptions.FindAsync(id);
     if (sub == null)
@@ -86,24 +85,10 @@ app.MapPut("/subs/{id}", async (SubscriptionDbContext context, int id, Subscript
 
     sub.Name = updatedSub.Name;
     sub.Cost = updatedSub.Cost;
-
-    if (sub.Cycle != updatedSub.Cycle) 
-    {
-        if (updatedSub.Cycle == Subscription.BillingCycle.Weekly)
-        {
-            sub.RenewalDate = DateTime.Now.AddDays(7);
-        }
-        else if (updatedSub.Cycle == Subscription.BillingCycle.Monthly)
-        {
-            sub.RenewalDate = DateTime.Now.AddMonths(1);
-        }
-        else if (updatedSub.Cycle == Subscription.BillingCycle.Yearly)
-        {
-            sub.RenewalDate = DateTime.Now.AddYears(1);
-        }
-    }
-    
     sub.Cycle = updatedSub.Cycle;
+
+    sub.RenewalDate = subService.CalculateRenewalDate(updatedSub.Cycle);
+    
     await context.SaveChangesAsync();
     
     return Results.NoContent();

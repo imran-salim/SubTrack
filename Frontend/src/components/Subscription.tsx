@@ -28,6 +28,7 @@ function Subscription({
   const [editedName, setEditedName] = useState(subscription.name);
   const [editedCost, setEditedCost] = useState(subscription.cost);
   const [editedCycle, setEditedCycle] = useState(subscription.cycle);
+  const [editedDate, setEditedDate] = useState(subscription.renewalDate);
   const [editing, setEditing] = useState(false);
 
   const cycleMap: { [key: string]: string } = {
@@ -40,6 +41,7 @@ function Subscription({
     setEditedName(subscription.name);
     setEditedCost(subscription.cost);
     setEditedCycle(subscription.cycle);
+    setEditedDate(subscription.renewalDate);
     setEditing(true);
   }
 
@@ -93,7 +95,16 @@ function Subscription({
         )}
       </td>
       <td className="px-6 py-4 text-slate-100">
-        {new Date(subscription.renewalDate).toLocaleDateString()}
+        {editing ? (
+          <input
+            type="date"
+            value={editedDate.split("T")[0]}
+            onChange={(e) => setEditedDate(e.target.value)}
+            className="px-3 py-2 bg-slate-700 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-blue-500 outline-none transition"
+          />
+        ) : (
+          new Date(subscription.renewalDate).toLocaleDateString()
+        )}
       </td>
       <td className="px-6 py-4 flex gap-2">
         {editing ? (
@@ -104,6 +115,7 @@ function Subscription({
                   name: editedName,
                   cost: editedCost,
                   cycle: editedCycle,
+                  renewalDate: editedDate,
                 });
                 setEditing(false);
               }}
