@@ -6,4 +6,4 @@ export interface Subscription {
   renewalDate: string;
 }
 
-export type NewSubscription = Omit<Subscription, 'id' | 'renewalDate'>;
+export type NewSubscription = Omit<Subscription, "id" | "renewalDate">;

@@ -73,6 +73,7 @@ The API endpoint can be configured via environment variables or falls back to a 
 
 1.  **Environment Variable (Docker):**
     The `Dockerfile` accepts a build argument `VITE_API_URL`. In `docker-compose.yml`, this is set to:
+
     ```yaml
     args:
       - VITE_API_URL=http://localhost:5123/subs
@@ -80,6 +81,7 @@ The API endpoint can be configured via environment variables or falls back to a 
 
 2.  **Local Development:**
     Create a `.env` file in the `Frontend` directory to override the default if your API runs on a different port:
+
     ```env
     VITE_API_URL=http://your-api-url:port/subs
     ```

@@ -9,12 +9,6 @@ function App() {
   const [newSubCost, setNewSubCost] = useState(0);
   const [newSubCycle, setNewSubCycle] = useState(1);
 
-  // const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5123/subs";
-
-  useEffect(() => {
-    loadSubscriptions();
-  }, []);
-
   async function loadSubscriptions() {
     try {
       const data = await api.getAll();
@@ -23,6 +17,10 @@ function App() {
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    loadSubscriptions();
+  }, []);
 
   async function handleDeleteSubscription(id: number) {
     try {
@@ -34,10 +32,13 @@ function App() {
     }
   }
 
-  async function handleEditSubscription(id: number, updatedSub: Partial<Subscription>) {
+  async function handleEditSubscription(
+    id: number,
+    updatedSub: Partial<Subscription>,
+  ) {
     try {
       await api.update(id, updatedSub);
-      await loadSubscriptions(); 
+      await loadSubscriptions();
     } catch (error) {
       console.error("Error updating:", error);
     }
@@ -71,18 +72,32 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-5xl font-bold text-white mb-2 text-center">SubTrack</h1>
-        <p className="text-center text-slate-400 mb-8">Track and manage your subscriptions</p>
+        <h1 className="text-5xl font-bold text-white mb-2 text-center">
+          SubTrack
+        </h1>
+        <p className="text-center text-slate-400 mb-8">
+          Track and manage your subscriptions
+        </p>
 
         <div className="bg-slate-800 rounded-lg shadow-xl overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-700 border-b border-slate-600">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">Name</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">Cost</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">Billing Cycle</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">Renewal Date</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">Actions</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">
+                  Name
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">
+                  Cost
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">
+                  Billing Cycle
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">
+                  Renewal Date
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-slate-100">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
