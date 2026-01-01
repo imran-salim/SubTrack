@@ -1,5 +1,7 @@
 # SubTrack
 
+![SubTrack Dashboard](assets/screenshot.png)
+
 SubTrack is a full-stack subscription tracking application designed to help users manage their recurring expenses efficiently. It features a high-performance **ASP.NET Core Web API** backend with smart renewal logic and a modern, interactive **React (TypeScript)** frontend.
 
 ## ✨ Key Features

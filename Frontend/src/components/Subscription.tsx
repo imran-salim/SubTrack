@@ -1,26 +1,13 @@
-import { useState } from "react";
-
-interface Sub {
-  id: number;
-  name: string;
-  cost: number;
-  cycle: number;
-  renewalDate: string;
-}
+import { useEffect, useState } from "react";
+import type { Subscription } from "../types";
 
 interface SubscriptionProps {
-  subscription: {
-    id: number;
-    name: string;
-    cost: number;
-    cycle: number;
-    renewalDate: string;
-  };
+  subscription: Subscription;
   deleteSubscription: (id: number) => void;
-  editSubscription: (id: number, updatedSub: Partial<Sub>) => void;
+  editSubscription: (id: number, updatedSub: Partial<Subscription>) => void;
 }
 
-function Subscription({
+function SubscriptionItem({
   subscription,
   deleteSubscription,
   editSubscription,
@@ -30,6 +17,13 @@ function Subscription({
   const [editedCycle, setEditedCycle] = useState(subscription.cycle);
   const [editedDate, setEditedDate] = useState(subscription.renewalDate);
   const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    setEditedName(subscription.name);
+    setEditedCost(subscription.cost);
+    setEditedCycle(subscription.cycle);
+    setEditedDate(subscription.renewalDate);
+  }, [subscription]);
 
   const cycleMap: { [key: string]: string } = {
     0: "Weekly",
@@ -151,4 +145,4 @@ function Subscription({
   );
 }
 
-export default Subscription;
+export default SubscriptionItem;

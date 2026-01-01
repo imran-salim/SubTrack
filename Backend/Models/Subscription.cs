@@ -1,3 +1,5 @@
+namespace SubTrack.Models;
+
 public class Subscription
 {
     public int Id { get; set; }
