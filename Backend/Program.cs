@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using SubTrack.Models;
+using SubTrack.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SubscriptionDbContext>(options =>

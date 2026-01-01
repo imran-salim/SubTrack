@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SubTrack.Models;
 
 class SubscriptionDbContext : DbContext
 {

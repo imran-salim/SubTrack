@@ -1,3 +1,7 @@
+using SubTrack.Models;
+
+namespace SubTrack.Services;
+
 public interface ISubscriptionService
 {
     DateTime CalculateRenewalDate(Subscription.BillingCycle cycle);
