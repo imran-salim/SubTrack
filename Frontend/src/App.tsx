@@ -18,51 +18,53 @@ function App() {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5123/subs";
 
   useEffect(() => {
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Fetched subscriptions:", data);
-        setSubs(data);
-      })
-      .catch((error) => console.error("Error fetching subscriptions:", error));
+    async function fetchSubscriptions() {
+      let response = await fetch(apiUrl);
+      if (!response.ok) {
+        console.error("Error fetching subscriptions:", response.statusText);
+        return;
+      }
+      let data = await response.json();
+      if (!Array.isArray(data)) {
+        console.error("Invalid data format received:", data);
+        return;
+      }
+      setSubs(data);
+    }
+    fetchSubscriptions();
   }, [apiUrl]);
 
-  function deleteSubscription(id: number) {
+  async function deleteSubscription(id: number) {
     setSubs(subs.filter((sub) => sub.id !== id));
-    fetch(`${apiUrl}/${id}`, {
+    let response = await fetch(`${apiUrl}/${id}`, {
       method: "DELETE",
-    }).then((response) => {
-      if (!response.ok) {
-        console.error("Error deleting subscription with ID:", id);
-      }
     });
+    if (!response.ok) {
+      console.error("Error deleting subscription with ID:", id);
+    }
   }
 
-  function editSubscription(id: number, updatedSub: Partial<Subscription>) {
-    fetch(`${apiUrl}/${id}`, {
+  async function editSubscription(id: number, updatedSub: Partial<Subscription>) {
+    let response = await fetch(`${apiUrl}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedSub),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return fetch(`${apiUrl}/${id}`).then((res) => res.json());
-        } else {
-          console.error("Error updating subscription with ID:", id);
-        }
-      })
-      .then((updatedSubscription) => {
-        if (updatedSubscription) {
-          setSubs(
-            subs.map((sub) => (sub.id === id ? updatedSubscription : sub)),
-          );
-        }
-      });
+    });
+    if (!response.ok) {
+      console.error("Error updating subscription with ID:", id);
+      return;
+    }
+    let updatedSubscription = await fetch(`${apiUrl}/${id}`).then((res) =>
+      res.json()
+    );
+    setSubs(
+      subs.map((sub) => (sub.id === id ? updatedSubscription : sub))
+    );
   }
 
-  function addSubscription(newSub: Omit<Subscription, "id" | "renewalDate">) {
+  async function addSubscription(newSub: Omit<Subscription, "id" | "renewalDate">) {
     if (!newSub.name.trim()) {
       console.error("Subscription name cannot be empty");
       return;
@@ -72,27 +74,26 @@ function App() {
       return;
     }
 
-    fetch(apiUrl, {
+    let response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newSub),
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Failed to add subscription");
-        }
-      })
-      .then((newSubscription) => {
-        setSubs([...subs, newSubscription]);
-        setNewSubName("");
-        setNewSubCost(0);
-        setNewSubCycle(1);
-      })
-      .catch((error) => console.error("Error adding subscription:", error));
+    });
+    if (!response.ok) {
+      console.error("Failed to add subscription");
+      return;
+    }
+    let newSubscription = await response.json();
+    if (!newSubscription) {
+      console.error("Invalid subscription data received:", newSubscription);
+      return;
+    }
+    setSubs([...subs, newSubscription]);
+    setNewSubName("");
+    setNewSubCost(0);
+    setNewSubCycle(1);
   }
 
   return (
