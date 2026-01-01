@@ -66,10 +66,29 @@ app.MapPost("/subs", async (SubscriptionDbContext context, ISubscriptionService 
 {
     if (sub == null)
     {
-        return Results.BadRequest();
+        return Results.BadRequest("Request body cannot be null.");
+    }
+    if (string.IsNullOrWhiteSpace(sub.Name))
+    {
+        return Results.BadRequest("Subscription name is required.");
+    }
+    if (sub.Cost < 0)
+    {
+        return Results.BadRequest("Subscription cost cannot be negative.");
+    }
+    if (!Enum.IsDefined(typeof(Subscription.BillingCycle), sub.Cycle))
+    {
+        return Results.BadRequest("Invalid billing cycle.");
     }
 
-    sub.RenewalDate = subService.CalculateRenewalDate(sub.Cycle);
+    try
+    {
+        sub.RenewalDate = subService.CalculateRenewalDate(sub.Cycle);
+    }
+    catch (ArgumentOutOfRangeException)
+    {
+        return Results.BadRequest("Unable to calculate renewal date for the given billing cycle.");
+    }
 
     context.Subscriptions.Add(sub);
     await context.SaveChangesAsync();
@@ -79,6 +98,19 @@ app.MapPost("/subs", async (SubscriptionDbContext context, ISubscriptionService 
 
 app.MapPut("/subs/{id}", async (SubscriptionDbContext context, ISubscriptionService subService, int id, Subscription updatedSub) =>
 {
+    if (updatedSub == null)
+    {
+        return Results.BadRequest("Request body cannot be null.");
+    }
+    if (string.IsNullOrWhiteSpace(updatedSub.Name))
+    {
+        return Results.BadRequest("Subscription name is required.");
+    }
+    if (updatedSub.Cost < 0)
+    {
+        return Results.BadRequest("Subscription cost cannot be negative.");
+    }
+    
     var sub = await context.Subscriptions.FindAsync(id);
     if (sub == null)
     {
@@ -89,7 +121,14 @@ app.MapPut("/subs/{id}", async (SubscriptionDbContext context, ISubscriptionServ
     sub.Cost = updatedSub.Cost;
     sub.Cycle = updatedSub.Cycle;
 
-    sub.RenewalDate = subService.CalculateRenewalDate(updatedSub.Cycle);
+    try
+    {
+        sub.RenewalDate = subService.CalculateRenewalDate(updatedSub.Cycle);
+    }
+    catch (ArgumentOutOfRangeException)
+    {
+        return Results.BadRequest("Unable to calculate renewal date for the given billing cycle.");
+    }
     
     await context.SaveChangesAsync();
     
