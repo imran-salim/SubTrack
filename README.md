@@ -63,6 +63,13 @@ If you prefer to run the services individually for development:
 * [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
 * [Node.js](https://nodejs.org/) (version 18+ recommended)
 
+#### Linux
+On Arch Linux derivatives (Manjaro, endeavourOS, SteamOS), you will need to install .NET, along with the ASP.NET runtime and the Entity Framework tools. Install these with:
+```bash
+sudo pacman -S dotnet-sdk aspnet-targeting-pack aspnet-runtime
+dotnet tool install dotnet-ef
+```
+
 ### 1. Backend Setup
 The backend must be running for the client to fetch data.
 
